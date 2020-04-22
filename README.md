@@ -18,7 +18,7 @@ If you want examples to use in a testnet (testnet-api.aergo.io:7845), you have t
 
 #### Create & Export Account
 
-[aergo connect][https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc]
+[download aergo connect](https://chrome.google.com/webstore/detail/aergo-connect/iopigoikekfcpcapjlkcdlokheickhpc)
 
 Create
 
