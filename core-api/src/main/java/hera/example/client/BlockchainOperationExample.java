@@ -4,6 +4,8 @@
 
 package hera.example.client;
 
+import static java.util.Collections.emptyList;
+
 import hera.api.model.BlockchainStatus;
 import hera.api.model.ChainIdHash;
 import hera.api.model.ChainInfo;
@@ -13,50 +15,80 @@ import hera.api.model.Peer;
 import hera.api.model.PeerMetric;
 import hera.api.model.ServerInfo;
 import hera.client.AergoClient;
-import hera.client.AergoClientBuilder;
-import java.util.Collections;
+import hera.example.AbstractExample;
 import java.util.List;
 
-public class BlockchainOperationExample {
+public class BlockchainOperationExample extends AbstractExample {
 
-  public static void main(String[] args) throws Exception {
-    // create client
-    AergoClient client = new AergoClientBuilder()
-        .withEndpoint("testnet-api.aergo.io:7845")
-        .withNonBlockingConnect()
-        .build();
+  public static void main(String[] args) {
+    AergoClient client = getTestnetClient();
 
-    /* get chain id hash */
-    ChainIdHash chainIdHash = client.getBlockchainOperation().getChainIdHash();
+    /* Get Chain Id Hash */
+    // Get chain id hash of current node.
+    {
+      ChainIdHash chainIdHash = client.getBlockchainOperation().getChainIdHash();
+      System.out.println("Chain id hash: " + chainIdHash);
+    }
 
-    /* get blockchain status */
-    BlockchainStatus blockchainStatus = client.getBlockchainOperation().getBlockchainStatus();
+    /* Get Blockchain Status */
+    // Get blockchain status of current node.
+    {
+      BlockchainStatus blockchainStatus = client.getBlockchainOperation().getBlockchainStatus();
+      System.out.println("Blockchain status: " + blockchainStatus);
+    }
 
-    /* get chain info */
-    ChainInfo chainInfo = client.getBlockchainOperation().getChainInfo();
+    /* Get Chain Info */
+    // Get chain info of current node.
+    {
+      ChainInfo chainInfo = client.getBlockchainOperation().getChainInfo();
+      System.out.println("Chain info: " + chainInfo);
+    }
 
-    /* get chain stats */
-    ChainStats chainStats = client.getBlockchainOperation().getChainStats();
+    /* Get Chain Stats */
+    // Get chain statistics of current node.
+    {
+      ChainStats chainStats = client.getBlockchainOperation().getChainStats();
+      System.out.println("Chain stats: " + chainStats);
+    }
 
-    /* get node status */
-    NodeStatus nodeStatus = client.getBlockchainOperation().getNodeStatus();
+    /* Get Node Status */
+    // Get node status of current node.
+    {
+      NodeStatus nodeStatus = client.getBlockchainOperation().getNodeStatus();
+      System.out.println("Node status: " + nodeStatus);
+    }
 
-    /* get server info */
-    List<String> categories = Collections.emptyList();
-    ServerInfo serverInfo = client.getBlockchainOperation().getServerInfo(categories);
+    /* Get Server Info */
+    // Get server info of current node. Category is not implemented yet.
+    {
+      List<String> categories = emptyList();
+      ServerInfo serverInfo = client.getBlockchainOperation().getServerInfo(categories);
+      System.out.println("Server info: " + serverInfo);
+    }
 
-    /* list peers */
+    /* List Peers */
+    // List peers of current node.
+    {
+      // Filtering itself and hidden.
+      {
+        List<Peer> peers = client.getBlockchainOperation().listPeers(false, false);
+        System.out.println("Peers: " + peers);
+      }
 
-    // filtering itself and hidden
-    List<Peer> hideHiddenAndSelfPeers = client.getBlockchainOperation().listPeers(false, false);
+      // Not filtering itself and hidden.
+      {
+        List<Peer> peers = client.getBlockchainOperation().listPeers(true, true);
+        System.out.println("Peers: " + peers);
+      }
+    }
 
-    // not filtering itself and hidden
-    List<Peer> showAllPeers = client.getBlockchainOperation().listPeers(true, true);
+    /* List Peers Metrics */
+    // List peers metrics of current node.
+    {
+      List<PeerMetric> peerMetrics = client.getBlockchainOperation().listPeerMetrics();
+      System.out.println("PeerMetrics: " + peerMetrics);
+    }
 
-    /* list peers metrics */
-    List<PeerMetric> peerMetrics = client.getBlockchainOperation().listPeerMetrics();
-
-    // close client
     client.close();
   }
 

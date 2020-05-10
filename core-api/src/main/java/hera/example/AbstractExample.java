@@ -4,43 +4,69 @@
 
 package hera.example;
 
+import hera.api.model.AccountState;
+import hera.api.model.Aer;
+import hera.api.model.Aer.Unit;
+import hera.api.model.BytesValue;
+import hera.api.model.EncryptedPrivateKey;
+import hera.api.model.Fee;
+import hera.api.transaction.NonceProvider;
+import hera.api.transaction.SimpleNonceProvider;
+import hera.client.AergoClient;
+import hera.client.AergoClientBuilder;
 import hera.key.AergoKey;
+import hera.key.AergoKeyGenerator;
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.Scanner;
 
 public abstract class AbstractExample {
 
-  protected String endpoint;
-  protected String encrypted;
-  protected String password;
-
-  protected AbstractExample() {
-    Properties properties = new Properties();
-    try (InputStream in = getClass().getResourceAsStream("/aergo.properties")) {
-      properties.load(in);
+  protected static AergoKey getRichKey() {
+    // AmMHQur9ye5bBpUdAATpswhaeygJa9xf4wjnXz27hy2TppUWoMM9
+    EncryptedPrivateKey encryptedPrivateKey = EncryptedPrivateKey
+        .of("47VYaB9WJ4FoBaiZ1HAh3yDBkSFDVM3fVxgjTfAnmmFa8GqyAZUb4gqKKirkoRgdhMazRHzbR");
+    AergoKey richKey = AergoKey.of(encryptedPrivateKey, "password");
+    AergoKey aergoKey = new AergoKeyGenerator().create();
+    try (AergoClient client = getLocalClient()) {
+      AccountState state = client.getAccountOperation()
+          .getState(richKey.getAddress());
+      NonceProvider nonceProvider = new SimpleNonceProvider();
+      nonceProvider.bindNonce(state);
+      long nonce = nonceProvider.incrementAndGetNonce(richKey.getAddress());
+      client.getTransactionOperation()
+          .sendTx(richKey, aergoKey.getAddress(), Aer.of("50000", Unit.AERGO),
+              nonce, Fee.INFINITY, BytesValue.EMPTY);
+      Thread.sleep(2200L);
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
-
-    this.endpoint = properties.getProperty("endpoint", "testnet-api.aergo.io:7845");
-    this.encrypted = properties.getProperty("encrypted");
-    this.password = properties.getProperty("password");
-
-    if (null == this.endpoint) {
-      throw new IllegalStateException("encrypted is null");
-    }
-    if (null == this.encrypted) {
-      throw new IllegalStateException("encrypted is null");
-    }
-    if (null == this.password) {
-      throw new IllegalStateException("password is null");
-    }
+    return aergoKey;
   }
 
-  protected AergoKey supplyKey() {
-    return AergoKey.of(encrypted, password);
+  protected static AergoClient getLocalClient() {
+    return new AergoClientBuilder()
+        .withEndpoint("localhost:7845")
+        .build();
   }
 
-  public abstract void run() throws Exception;
+  protected static AergoClient getTestnetClient() {
+    return new AergoClientBuilder()
+        .withEndpoint("testnet-api.aergo.io:7845")
+        .build();
+  }
+
+  protected static String loadResource(String name) {
+    StringBuilder stringBuilder = new StringBuilder();
+    InputStream inputStream = loadResourceAsStream(name);
+    Scanner scanner = new Scanner(inputStream);
+    while (scanner.hasNext()) {
+      stringBuilder.append(scanner.next());
+    }
+    return stringBuilder.toString();
+  }
+
+  protected static InputStream loadResourceAsStream(String name) {
+    return AbstractExample.class.getResourceAsStream(name);
+  }
 
 }

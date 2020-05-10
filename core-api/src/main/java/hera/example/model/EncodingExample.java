@@ -4,70 +4,91 @@
 
 package hera.example.model;
 
-import static java.util.UUID.randomUUID;
-
 import hera.api.encode.Decoder;
 import hera.api.encode.Encoder;
 import hera.api.model.BytesValue;
 import hera.api.model.Signature;
+import hera.example.AbstractExample;
 
-public class EncodingExample {
+public class EncodingExample extends AbstractExample {
 
   public static void main(String[] args) {
-    BytesValue bytesValue = BytesValue.of(randomUUID().toString().getBytes());
 
-    /* encode */
+    /* Encode */
+    // Heraj provides utils for encoding.
+    {
+      // To hex.
+      {
+        BytesValue bytesValue = BytesValue.of("test".getBytes());
+        String encoded = bytesValue.getEncoded(Encoder.Hex);
+        System.out.println(encoded);
+      }
 
-    // to hex
-    String hexEncoded = bytesValue.getEncoded(Encoder.Hex);
-    System.out.println(hexEncoded);
+      // To base58.
+      {
+        BytesValue bytesValue = BytesValue.of("test".getBytes());
+        String encoded = bytesValue.getEncoded(Encoder.Base58);
+        System.out.println(encoded);
+      }
 
-    // to base58
-    String base58Encoded = bytesValue.getEncoded(Encoder.Base58);
-    System.out.println(base58Encoded);
+      // To base58 with checksum.
+      {
+        BytesValue bytesValue = BytesValue.of("test".getBytes());
+        String encoded = bytesValue.getEncoded(Encoder.Base58Check);
+        System.out.println(encoded);
+      }
 
-    // to base58 with checksum
-    String base58WithCheckEncoded = bytesValue.getEncoded(Encoder.Base58Check);
-    System.out.println(base58WithCheckEncoded);
+      // To base64.
+      {
+        BytesValue bytesValue = BytesValue.of("test".getBytes());
+        String encoded = bytesValue.getEncoded(Encoder.Base64);
+        System.out.println(encoded);
+      }
+    }
 
-    // to base64
-    String base64Encoded = bytesValue.getEncoded(Encoder.Base64);
-    System.out.println(base64Encoded);
+    /* Decode */
+    // Heraj provides utils for decoding.
+    {
+      // From hex.
+      {
+        String encoded = "74657374";
+        BytesValue bytesValue = BytesValue.of(encoded, Decoder.Hex);
+        System.out.println(bytesValue);
+      }
 
+      // From base58.
+      {
+        String encoded = "3yZe7d";
+        BytesValue bytesValue = BytesValue.of(encoded, Decoder.Base58);
+        System.out.println(bytesValue);
+      }
 
-    /* decode */
+      // From base58 with checksum.
+      {
+        String encoded = "LUC1eAJa5jW";
+        BytesValue bytesValue = BytesValue.of(encoded, Decoder.Base58Check);
+        System.out.println(bytesValue);
+      }
 
-    // from hex
-    BytesValue fromHex = BytesValue
-        .of("307864333862306339646363383931666332623735633136643837653063303837373735333031323039323664356361663566323466396634356531636439316639",
-            Decoder.Hex);
-    System.out.println(fromHex);
+      // From base64.
+      {
+        String encoded = "dGVzdA==";
+        BytesValue bytesValue = BytesValue.of(encoded, Decoder.Base64);
+        System.out.println(bytesValue);
+      }
+    }
 
-    // from base58
-    BytesValue fromBase58 = BytesValue
-        .of("KszNdKzDtTde6mo4ute7nkawftKUGfEhqCcRkCaEVKpPU4iGEJWSScRUrVyhsmNGQ6KFbueikshvtgJqXhjVLZpRxk",
-            Decoder.Base58);
-    System.out.println(fromBase58);
+    /* Example */
+    {
+      // Signature in base64.
+      {
+        String encoded = "MEUCIQDP3ywVXX1DP42nTgM6cF95GFfpoEcl4D9ZP+MHO7SgoQIgdq2UiEiSp23lcPFzCHtDmh7pVzsow5x1s8p5Kz0aN7I=";
+        BytesValue rawSignature = BytesValue.of(encoded, Decoder.Base64);
+        Signature signature = Signature.of(rawSignature);
+        System.out.println(signature);
+      }
+    }
 
-    // from base58
-    BytesValue fromBase58WithCheck = BytesValue
-        .of("38YDwtHjcVvSM56oCVXkGfuTP46QKfXE9E22oYJY5h5YrX6a7rvbuzxf7Y5A5vSpCcab7gsAenQK9rXpNsAWjUm7jKRD86g9",
-            Decoder.Base58Check);
-    System.out.println(fromBase58WithCheck);
-
-    // from base64
-    BytesValue fromBase64 = BytesValue
-        .of("MHhkMzhiMGM5ZGNjODkxZmMyYjc1YzE2ZDg3ZTBjMDg3Nzc1MzAxMjA5MjZkNWNhZjVmMjRmOWY0NWUxY2Q5MWY5",
-            Decoder.Base64);
-    System.out.println(fromBase64);
-
-
-    /* Signature in base64 */
-    BytesValue rawSignature = BytesValue
-        .of("MEUCIQDP3ywVXX1DP42nTgM6cF95GFfpoEcl4D9ZP+MHO7SgoQIgdq2UiEiSp23lcPFzCHtDmh7pVzsow5x1s8p5Kz0aN7I=",
-            Decoder.Base64);
-    Signature signature = Signature.of(rawSignature);
-    System.out.println(signature);
   }
 
 }

@@ -79,7 +79,7 @@ class BlockStreamImpl implements BlockStream {
         System.err.println("Complete");
       }
     };
-    return client.getBlockOperation().subscribeNewBlock(streamObserver);
+    return client.getBlockOperation().subscribeBlock(streamObserver);
   }
 
 }

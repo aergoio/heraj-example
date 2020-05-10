@@ -4,68 +4,117 @@
 
 package hera.example.client;
 
+import hera.api.model.AccountAddress;
+import hera.api.model.AccountState;
 import hera.api.model.Aer;
-import hera.api.model.ChainIdHash;
-import hera.api.model.RawTransaction;
-import hera.api.model.Transaction;
-import hera.api.model.TxHash;
+import hera.api.model.BytesValue;
+import hera.api.model.Fee;
 import hera.api.transaction.NonceProvider;
 import hera.api.transaction.SimpleNonceProvider;
 import hera.client.AergoClient;
-import hera.client.AergoClientBuilder;
+import hera.example.AbstractExample;
 import hera.key.AergoKey;
-import hera.key.AergoKeyGenerator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public class NonceProviderExample {
+public class NonceProviderExample extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
-    // create client
-    AergoClient client = new AergoClientBuilder()
-        .withEndpoint("localhost:7845")
-        .withNonBlockingConnect()
-        .build();
-    AergoKey key = new AergoKeyGenerator().create();
+    AergoClient client = getLocalClient();
+    AergoKey richKey = getRichKey();
 
-    /* create nonce provider with capacity 100 */
-    NonceProvider nonceProvider = new SimpleNonceProvider(100);
+    /* Create */
+    // Create a SimpleNonceProvider.
+    {
+      // With explicit capacity.
+      {
+        // create nonce provider with capacity 100
+        NonceProvider nonceProvider = new SimpleNonceProvider(100);
+      }
 
-    /* bind nonce */
-    nonceProvider.bindNonce(key.getAddress(), 0L);
+      // With implicit capacity.
+      {
+        // create nonce provider with capacity 1000
+        NonceProvider nonceProvider = new SimpleNonceProvider();
+      }
+    }
 
-    // request
-    ChainIdHash chainIdHash = client.getBlockchainOperation().getChainIdHash();
-    Function<Long, RawTransaction> txSupplier = (nonce) -> RawTransaction.newBuilder(chainIdHash)
-        .from(key.getAddress())
-        .to(key.getAddress())
-        .amount(Aer.ONE)
-        .nonce(nonce)
-        .build();
-    ExecutorService service = Executors.newCachedThreadPool();
-    IntStream.range(0, 100).forEach(i -> {
-      service.submit(() -> {
-        /* get nonce to use */
-        long nonce = nonceProvider.incrementAndGetNonce(key.getAddress());
+    /* Bind */
+    // Bind nonce for address.
+    {
+      // For address.
+      {
+        AccountAddress accountAddress = AccountAddress
+            .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
+        NonceProvider nonceProvider = new SimpleNonceProvider();
+        nonceProvider.bindNonce(accountAddress, 30L);
+      }
 
-        RawTransaction rawTransaction = txSupplier.apply(nonce);
-        Transaction signed = key.sign(rawTransaction);
-        TxHash txHash = client.getTransactionOperation().commit(signed);
-        System.out.println(txHash);
+      // Using account state. It binds nonce for corresponding state.
+      {
+        AccountAddress accountAddress = AccountAddress
+            .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
+        AccountState accountState = client.getAccountOperation().getState(accountAddress);
+        NonceProvider nonceProvider = new SimpleNonceProvider();
+        nonceProvider.bindNonce(accountState);
+      }
+    }
+
+    /* Use */
+    {
+      // Increment and get nonce. It's thread-safe
+      {
+        AergoKey signer = richKey;
+        NonceProvider nonceProvider = new SimpleNonceProvider();
+        long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      }
+
+      // Get last used nonce.
+      {
+        AergoKey signer = richKey;
+        NonceProvider nonceProvider = new SimpleNonceProvider();
+        long nonce = nonceProvider.getLastUsedNonce(signer.getAddress());
+      }
+    }
+
+    /* Example */
+    {
+      // prepare signer
+      AergoKey signer = richKey;
+
+      // create an nonce provider
+      AccountState accountState = client.getAccountOperation().getState(signer.getAddress());
+      NonceProvider nonceProvider = new SimpleNonceProvider();
+      nonceProvider.bindNonce(accountState);
+
+      // print current
+      long currentNonce = nonceProvider.getLastUsedNonce(signer.getAddress());
+      System.out.println("Current nonce: " + currentNonce);
+
+      // request using thread pool
+      AccountAddress accountAddress = AccountAddress
+          .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
+      ExecutorService service = Executors.newCachedThreadPool();
+      IntStream.range(0, 1000).forEach(i -> {
+        service.submit(() -> {
+          // get nonce to use
+          long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+          client.getTransactionOperation().sendTx(signer, accountAddress, Aer.ONE, nonce,
+              Fee.INFINITY, BytesValue.EMPTY);
+        });
       });
-    });
 
-    // stop the service
-    service.awaitTermination(3000L, TimeUnit.MILLISECONDS);
-    service.shutdown();
+      // stop the service
+      service.awaitTermination(3000L, TimeUnit.MILLISECONDS);
+      service.shutdown();
 
-    long lastUsedNonce = nonceProvider.getLastUsedNonce(key.getAddress());
-    System.out.println("Last nonce: " + lastUsedNonce);
+      // print 1000
+      long lastUsedNonce = nonceProvider.getLastUsedNonce(signer.getAddress());
+      System.out.println("Nonce difference: " + (lastUsedNonce - currentNonce));
+    }
 
-    // close client
     client.close();
   }
 

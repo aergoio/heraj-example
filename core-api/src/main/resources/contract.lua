@@ -13,5 +13,10 @@ function get(key)
   return system.getItem(key)
 end
 
+function check_delegation()
+  return true
+end
+
 abi.register(set)
+abi.fee_delegation(set)
 abi.register_view(get)
