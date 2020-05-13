@@ -110,7 +110,7 @@ public class NonceProviderExample extends AbstractExample {
       service.awaitTermination(3000L, TimeUnit.MILLISECONDS);
       service.shutdown();
 
-      // print 1000
+      // should print 1000
       long lastUsedNonce = nonceProvider.getLastUsedNonce(signer.getAddress());
       System.out.println("Nonce difference: " + (lastUsedNonce - currentNonce));
     }

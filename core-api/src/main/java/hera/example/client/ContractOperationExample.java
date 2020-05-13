@@ -4,7 +4,7 @@
 
 package hera.example.client;
 
-import hera.api.model.Aer;
+import hera.api.model.AccountState;
 import hera.api.model.ContractAddress;
 import hera.api.model.ContractDefinition;
 import hera.api.model.ContractInterface;
@@ -17,6 +17,8 @@ import hera.api.model.Fee;
 import hera.api.model.StreamObserver;
 import hera.api.model.Subscription;
 import hera.api.model.TxHash;
+import hera.api.transaction.NonceProvider;
+import hera.api.transaction.SimpleNonceProvider;
 import hera.client.AergoClient;
 import hera.example.AbstractExample;
 import hera.key.AergoKey;
@@ -25,92 +27,81 @@ import java.util.List;
 public class ContractOperationExample extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
+    // prepare client and signer
     AergoClient client = getLocalClient();
     AergoKey richKey = getRichKey();
-    String payload = loadResource("/payload");
-    ContractInterface contractInterfaceKeep;
+
+    // prepare nonce provider
+    NonceProvider nonceProvider = new SimpleNonceProvider();
+    AccountState state = client.getAccountOperation().getState(richKey.getAddress());
+    nonceProvider.bindNonce(state);
+
+    // prepare contractPayload
+    String contractPayload = loadResource("/contract_payload");
+
+    // prepare keep variables
     ContractAddress contractAddressKeep;
+    ContractInterface contractInterfaceKeep;
 
-    /* Deployment */
-    // Deploy contract.
+    /* Deploy */
+    // Deploy -> Wait -> Get contract tx receipt -> Find a contract address -> Get contract interface.
     {
-      // Without args
-      {
-        // prepare signer
-        AergoKey signer = richKey;
+      AergoKey signer = richKey;
 
-        // made by aergoluac --payload {some_contract}.lua
-        String encodedContract = payload;
+      // made by aergoluac --compiledContract {some_contract}.lua
+      String encodedContract = contractPayload;
 
-        // make a contract definition
-        ContractDefinition contractDefinition = ContractDefinition.newBuilder()
-            .encodedContract(encodedContract)
-            .build();
-        TxHash txHash = client.getContractOperation()
-            .deployTx(signer, contractDefinition, 1L, Fee.ZERO);
-      }
+      // make a contract definition
+      ContractDefinition contractDefinition = ContractDefinition.newBuilder()
+          .encodedContract(encodedContract)
+          .build();
 
-      // With args
-      {
-        AergoKey signer = richKey;
+      // deploy
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getContractOperation().deployTx(signer, contractDefinition,
+          nonce, Fee.ZERO);
+      System.out.println("Contract deployment tx hash: " + txHash);
 
-        // made by aergoluac --payload {some_contract}.lua
-        String encodedContract = payload;
+      // wait deploy contract to be confirmed
+      Thread.sleep(2200L);
 
-        // make a contract definition
-        ContractDefinition contractDefinition = ContractDefinition.newBuilder()
-            .encodedContract(encodedContract)
-            .constructorArgs("key", 123, "test")
-            .build();
-        TxHash txHash = client.getContractOperation()
-            .deployTx(signer, contractDefinition, 2L, Fee.ZERO);
-      }
+      // get contract tx receipt
+      ContractTxReceipt contractTxReceipt = client.getContractOperation()
+          .getContractTxReceipt(txHash);
+      System.out.println("Contract tx receipt: " + contractTxReceipt);
 
-      // With args and amount
-      {
-        AergoKey signer = richKey;
-        Aer amount = Aer.AERGO_ONE;
-        ContractDefinition contractDefinition = ContractDefinition.newBuilder()
-            .encodedContract(
-                "4coHBeUgiMBpiGmZ9McPhAXWt7Ymk8WoTipWvvHrMytjtLqVqwvKo2VqGjFYHLGT2vpvYCcB1AmMLGCbf9BPVE8KSfEqXTvc2TunE2Pp2ZjtErng1odLHttTrg2LBtT5CqWrLwwVEv8Wi8BQjvenrEvrVw3apJoJjGJFWP1eNX9hU7ahAtkMCYXDp3EaD3Vr6tpXwD61N3tvG8ejqQtUnkzNaHGauNUU8PrzXBXsa4a2WUrWAFzxV1e6mwk2tL8aZtzvBGm2LGrcXVaADyomk9a58FNG6YVKwLHwcttnxKi6CWRRe5ueCBZuAxxR1DQWRzCzUs4oEZY7MpEMmMdqgN5QLw4dWQDQfj36a94NpLN9DcbeXesQ8fmFVXZBJzRoZLuQg5DQGNsu5upKAq6fndvpJ3puurDkztYKawToTtDqBjbbAkwUd3FcSHjogeiY6odoxFQvVJcLjpbBwMVboSVsnn3p1XYdUFvZ3KpjJzLd8D3JbozGSoqED1X8Re7NsGJS5JZiYdrzSyPCHjkEd1SN1ssvniFVJBJVZkojTQ1PMgT6P5ZakQC2SEw42t52BdPujr4iVsgkqGKbry3ouXef8wA8c7tJGazqa7dZ2RBKY3Bxerz4LFJsVupF6SKpXnDjJwedHiuhgj1EvZ162SqkUrakk53JUwtdL5QPFG67nLar9ZHro41xc2k3MvH1rouDYpMnRbrHxz2ZkRvyQ75CxryKm1EyT2WEC51L41R8YA8DMhPMVpSUwcYr6zVLvEmvoXL2AGz1QZNyUdzRLeQ9sYqzkkSMkXaMLG3wuLP2nGZjVbKN8f4fssRLA8x2K5jkZW4TTHuZwM4j5bfuRnNp2XH9xUiK8wfiH7W8xr6j")
-            .constructorArgs("key", 123, "test")
-            .amount(amount)
-            .build();
-        TxHash txHash = client.getContractOperation()
-            .deployTx(signer, contractDefinition, 3L, Fee.ZERO);
-      }
+      // find a contract address
+      ContractAddress contractAddress = contractTxReceipt.getContractAddress();
 
-      /* Deployment Process */
-      // Deploy -> Wait -> Get contract tx receipt -> Find a contract address -> Get contract interface.
-      {
-        AergoKey signer = richKey;
+      // get contract interface
+      ContractInterface contractInterface = client.getContractOperation()
+          .getContractInterface(contractAddress);
+      System.out.println("Contract interface: " + contractInterface);
 
-        // deploy
-        ContractDefinition contractDefinition = ContractDefinition.newBuilder()
-            .encodedContract(
-                "4coHBeUgiMBpiGmZ9McPhAXWt7Ymk8WoTipWvvHrMytjtLqVqwvKo2VqGjFYHLGT2vpvYCcB1AmMLGCbf9BPVE8KSfEqXTvc2TunE2Pp2ZjtErng1odLHttTrg2LBtT5CqWrLwwVEv8Wi8BQjvenrEvrVw3apJoJjGJFWP1eNX9hU7ahAtkMCYXDp3EaD3Vr6tpXwD61N3tvG8ejqQtUnkzNaHGauNUU8PrzXBXsa4a2WUrWAFzxV1e6mwk2tL8aZtzvBGm2LGrcXVaADyomk9a58FNG6YVKwLHwcttnxKi6CWRRe5ueCBZuAxxR1DQWRzCzUs4oEZY7MpEMmMdqgN5QLw4dWQDQfj36a94NpLN9DcbeXesQ8fmFVXZBJzRoZLuQg5DQGNsu5upKAq6fndvpJ3puurDkztYKawToTtDqBjbbAkwUd3FcSHjogeiY6odoxFQvVJcLjpbBwMVboSVsnn3p1XYdUFvZ3KpjJzLd8D3JbozGSoqED1X8Re7NsGJS5JZiYdrzSyPCHjkEd1SN1ssvniFVJBJVZkojTQ1PMgT6P5ZakQC2SEw42t52BdPujr4iVsgkqGKbry3ouXef8wA8c7tJGazqa7dZ2RBKY3Bxerz4LFJsVupF6SKpXnDjJwedHiuhgj1EvZ162SqkUrakk53JUwtdL5QPFG67nLar9ZHro41xc2k3MvH1rouDYpMnRbrHxz2ZkRvyQ75CxryKm1EyT2WEC51L41R8YA8DMhPMVpSUwcYr6zVLvEmvoXL2AGz1QZNyUdzRLeQ9sYqzkkSMkXaMLG3wuLP2nGZjVbKN8f4fssRLA8x2K5jkZW4TTHuZwM4j5bfuRnNp2XH9xUiK8wfiH7W8xr6j")
-            .build();
-        TxHash txHash = client.getContractOperation()
-            .deployTx(signer, contractDefinition, 4L, Fee.ZERO);
+      // ignore in docs
+      contractInterfaceKeep = contractInterface;
+      contractAddressKeep = contractInterface.getAddress();
+    }
 
-        // wait deploy contract to be confirmed
-        Thread.sleep(2200L);
+    /* Re-Deploy */
+    {
+      // prepare signer
+      AergoKey signer = richKey;
 
-        // get contract tx receipt
-        ContractTxReceipt contractTxReceipt = client.getContractOperation()
-            .getContractTxReceipt(txHash);
+      // made by aergoluac --compiledContract {some_contract}.lua
+      String encodedContract = contractPayload;
 
-        // find a contract address
-        ContractAddress contractAddress = contractTxReceipt.getContractAddress();
+      // make a contract definition
+      ContractDefinition newDefinition = ContractDefinition.newBuilder()
+          .encodedContract(encodedContract)
+          .build();
 
-        // get contract interface
-        ContractInterface contractInterface = client.getContractOperation()
-            .getContractInterface(contractAddress);
-
-        // ignore in docs
-        contractInterfaceKeep = contractInterface;
-        contractAddressKeep = contractInterface.getAddress();
-      }
+      // redeploy
+      ContractAddress contractAddress = contractAddressKeep;
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getContractOperation()
+          .redeployTx(signer, contractAddress, newDefinition, nonce, Fee.ZERO);
+      System.out.println("Redeploy tx hash: " + txHash);
     }
 
     /* Get Contract Tx Receipt */
@@ -119,6 +110,7 @@ public class ContractOperationExample extends AbstractExample {
       TxHash txHash = TxHash.of("EGXNDgjY2vQ6uuP3UF3dNXud54dF4FNVY181kaeQ26H9");
       ContractTxReceipt contractTxReceipt = client.getContractOperation()
           .getContractTxReceipt(txHash);
+      System.out.println("ContractTxReceipt: " + contractTxReceipt);
     }
 
     /* Get Contract Interface */
@@ -128,102 +120,60 @@ public class ContractOperationExample extends AbstractExample {
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
       ContractInterface contractInterface = client.getContractOperation()
           .getContractInterface(contractAddress);
+      System.out.println("ContractInterface: " + contractInterface);
     }
 
     /* Execute */
     // Execute contract function.
     {
-      {
-
-      }
+      // prepare signer
       AergoKey signer = richKey;
+
+      // make a contract invocation
       ContractInterface contractInterface = contractInterfaceKeep;
-      ContractInvocation execution = contractInterface.newInvocationBuilder()
+      ContractInvocation invocation = contractInterface.newInvocationBuilder()
           .function("set")
           .args("key", 333, "test2")
           .build();
+
+      // execute
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
       TxHash txHash = client.getContractOperation()
-          .executeTx(signer, execution, 4L, Fee.ZERO);
+          .executeTx(signer, invocation, nonce, Fee.ZERO);
+      System.out.println("Execute tx hash: " + txHash);
     }
 
     Thread.sleep(2000L);
 
     /* Query */
     {
-      class Data {
-
-        protected int intVal;
-
-        protected String stringVal;
-
-        public int getIntVal() {
-          return intVal;
-        }
-
-        public void setIntVal(int intVal) {
-          this.intVal = intVal;
-        }
-
-        public String getStringVal() {
-          return stringVal;
-        }
-
-        public void setStringVal(String stringVal) {
-          this.stringVal = stringVal;
-        }
-
-        @Override
-        public String toString() {
-          return "Data [intVal=" + intVal + ", stringVal=" + stringVal + "]";
-        }
-
-      }
-
+      // make a contract invocation
       ContractInterface contractInterface = contractInterfaceKeep;
       ContractInvocation query = contractInterface.newInvocationBuilder()
           .function("get")
           .args("key")
           .build();
+
+      // query contract
       ContractResult queryResult = client.getContractOperation().query(query);
       Data data = queryResult.bind(Data.class);
+      System.out.println("Raw contract result: " + queryResult);
+      System.out.println("Binded data: " + data);
     }
 
     /* List Event */
     {
-      // By block number
-      {
-        // get event of specific address in block 1 ~ 10
-        ContractAddress contractAddress = contractAddressKeep;
-        EventFilter eventFilter = EventFilter.newBuilder(contractAddress)
-            .fromBlockNumber(1L)
-            .toBlockNumber(10L)
-            .build();
-        List<Event> events = client.getContractOperation().listEvents(eventFilter);
-      }
-      // Of recent block
-      {
-        // get event of specific address in recent 1000 block
-        ContractAddress contractAddress = contractAddressKeep;
-        EventFilter eventFilter = EventFilter.newBuilder(contractAddress)
-            .eventName("set")
-            .recentBlockCount(1000)
-            .build();
-        List<Event> events = client.getContractOperation().listEvents(eventFilter);
-      }
-      // By event name and args
-      {
-        // get event of specific address with name "set" and args "key" in recent 1000 block
-        ContractAddress contractAddress = contractAddressKeep;
-        EventFilter eventFilter = EventFilter.newBuilder(contractAddress)
-            .eventName("set")
-            .args("key")
-            .recentBlockCount(1000)
-            .build();
-        List<Event> events = client.getContractOperation().listEvents(eventFilter);
-      }
+      ContractAddress contractAddress = contractAddressKeep;
+      EventFilter eventFilter = EventFilter.newBuilder(contractAddress)
+          .eventName("set")
+          .args("key")
+          .recentBlockCount(1000)
+          .build();
+      List<Event> events = client.getContractOperation().listEvents(eventFilter);
+      System.out.println("Events: " + events);
     }
 
-    /* subscribe event */
+    /* Event Subscription */
     {
       // prepare signer
       AergoKey signer = richKey;
@@ -255,29 +205,16 @@ public class ContractOperationExample extends AbstractExample {
           .function("set")
           .args("key", 333, "test2")
           .build();
-      client.getContractOperation().execute(signer, run, 5L, Fee.ZERO);
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      client.getContractOperation().executeTx(signer, run, nonce, Fee.ZERO);
       Thread.sleep(2200L);
 
       // unsubscribe event
       subscription.unsubscribe();
     }
 
-    /* Re Deploy */
-    {
-      // prepare signer
-      AergoKey signer = richKey;
-
-      ContractAddress alreadyDeployed = contractAddressKeep;
-      // made by aergoluac --payload {some_contract}.lua
-      String encodedContract = payload;
-      ContractDefinition newDefinition = ContractDefinition.newBuilder()
-          .encodedContract(encodedContract)
-          .build();
-      TxHash txHash = client.getContractOperation()
-          .redeployTx(signer, alreadyDeployed, newDefinition, 6L, Fee.ZERO);
-    }
-
     client.close();
   }
 
 }
+

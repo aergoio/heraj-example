@@ -21,18 +21,18 @@ public class BlockOperationExample extends AbstractExample {
     /* Get Block */
     // Get block.
     {
-      // By hash
+      // By hash.
       {
         BlockHash blockHash = BlockHash.of("DN9TvryaThbJneSpzaXp5ZsS4gE3UMzKfaXC4x8L5qR1");
         Block block = client.getBlockOperation().getBlock(blockHash);
-        System.out.println("Block: " + block);
+        System.out.println("Block by hash: " + block);
       }
 
-      // By height
+      // By height.
       {
         long height = 27_066_653L;
         Block block = client.getBlockOperation().getBlock(height);
-        System.out.println("Block: " + block);
+        System.out.println("Block by hash: " + block);
       }
     }
 
@@ -43,14 +43,14 @@ public class BlockOperationExample extends AbstractExample {
       {
         BlockHash blockHash = BlockHash.of("DN9TvryaThbJneSpzaXp5ZsS4gE3UMzKfaXC4x8L5qR1");
         BlockMetadata blockMetadata = client.getBlockOperation().getBlockMetadata(blockHash);
-        System.out.println("Block metadata: " + blockMetadata);
+        System.out.println("Block metadata by hash: " + blockMetadata);
       }
 
       // By height.
       {
         long height = 27_066_653L;
         BlockMetadata blockMetadata = client.getBlockOperation().getBlockMetadata(height);
-        System.out.println("Block metadata: " + blockMetadata);
+        System.out.println("Block metadata by height: " + blockMetadata);
       }
     }
 
@@ -63,7 +63,7 @@ public class BlockOperationExample extends AbstractExample {
         BlockHash blockHash = BlockHash.of("DN9TvryaThbJneSpzaXp5ZsS4gE3UMzKfaXC4x8L5qR1");
         List<BlockMetadata> blockMetadatas = client.getBlockOperation()
             .listBlockMetadatas(blockHash, 100);
-        System.out.println(blockMetadatas);
+        System.out.println("Block metadatas by hash: " + blockMetadatas);
       }
 
       // By height.
@@ -72,7 +72,7 @@ public class BlockOperationExample extends AbstractExample {
         long height = 27_066_653L;
         List<BlockMetadata> blockMetadatas = client.getBlockOperation()
             .listBlockMetadatas(height, 100);
-        System.out.println(blockMetadatas);
+        System.out.println("Block metadatas by height: " + blockMetadatas);
       }
     }
 
@@ -84,7 +84,7 @@ public class BlockOperationExample extends AbstractExample {
           .subscribeBlock(new StreamObserver<Block>() {
             @Override
             public void onNext(Block value) {
-              System.out.println("Next: " + value);
+              System.out.println("Next block: " + value);
             }
 
             @Override
@@ -111,7 +111,7 @@ public class BlockOperationExample extends AbstractExample {
           .getBlockOperation().subscribeBlockMetadata(new StreamObserver<BlockMetadata>() {
             @Override
             public void onNext(BlockMetadata value) {
-              System.out.println("Next: " + value);
+              System.out.println("Next block metadata: " + value);
             }
 
             @Override

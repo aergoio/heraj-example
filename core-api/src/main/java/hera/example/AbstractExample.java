@@ -4,18 +4,27 @@
 
 package hera.example;
 
+import static java.util.UUID.randomUUID;
+
 import hera.api.model.AccountState;
 import hera.api.model.Aer;
 import hera.api.model.Aer.Unit;
 import hera.api.model.BytesValue;
+import hera.api.model.ContractAddress;
+import hera.api.model.ContractDefinition;
+import hera.api.model.ContractInterface;
+import hera.api.model.ContractTxReceipt;
 import hera.api.model.EncryptedPrivateKey;
 import hera.api.model.Fee;
+import hera.api.model.Name;
+import hera.api.model.TxHash;
 import hera.api.transaction.NonceProvider;
 import hera.api.transaction.SimpleNonceProvider;
 import hera.client.AergoClient;
 import hera.client.AergoClientBuilder;
 import hera.key.AergoKey;
 import hera.key.AergoKeyGenerator;
+import hera.wallet.WalletApi;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -41,6 +50,11 @@ public abstract class AbstractExample {
       throw new IllegalStateException(e);
     }
     return aergoKey;
+  }
+
+  // only 12-length character is valid
+  protected static Name randomName() {
+    return Name.of(randomUUID().toString().replace("-", "").substring(0, 12));
   }
 
   protected static AergoClient getLocalClient() {

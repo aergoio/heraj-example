@@ -17,6 +17,7 @@ function check_delegation()
   return true
 end
 
+abi.register_view(get)
 abi.register(set)
 abi.fee_delegation(set)
-abi.register_view(get)
+abi.payable(set)

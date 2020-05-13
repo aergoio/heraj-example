@@ -47,7 +47,7 @@ public class TransactionExample extends AbstractExample {
             .amount(Aer.AERGO_ONE)
             .nonce(1L)
             .fee(Fee.ZERO)
-            .payload(BytesValue.of("payload".getBytes()))
+            .payload(BytesValue.of("contract_payload".getBytes()))
             .build();
         Transaction transaction = aergoKey.sign(rawTransaction);
         System.out.println("Plain transaction: " + transaction);
@@ -205,7 +205,7 @@ public class TransactionExample extends AbstractExample {
       }
     }
 
-    /* Parse payload to model */
+    /* Parse contract_payload to model */
     {
       /* Contract Invocation */
       {

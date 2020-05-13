@@ -15,6 +15,8 @@ import hera.api.model.ElectedCandidate;
 import hera.api.model.Name;
 import hera.api.model.StakeInfo;
 import hera.api.model.TxHash;
+import hera.api.transaction.NonceProvider;
+import hera.api.transaction.SimpleNonceProvider;
 import hera.client.AergoClient;
 import hera.example.AbstractExample;
 import hera.key.AergoKey;
@@ -23,8 +25,14 @@ import java.util.List;
 public class AccountOperationExample extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
+    // prepare client and signer
     AergoClient client = getLocalClient();
     AergoKey richKey = getRichKey();
+
+    // prepare nonce provider
+    NonceProvider nonceProvider = new SimpleNonceProvider();
+    AccountState state = client.getAccountOperation().getState(richKey.getAddress());
+    nonceProvider.bindNonce(state);
 
     /* Get Account State */
     // Get state of account.
@@ -42,8 +50,9 @@ public class AccountOperationExample extends AbstractExample {
       AergoKey signer = richKey;
 
       // make a naming transaction
-      Name name = Name.of("samplename11");
-      TxHash txHash = client.getAccountOperation().createNameTx(signer, name, 1L);
+      Name name = randomName();
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getAccountOperation().createNameTx(signer, name, nonce);
       System.out.println("Create name tx hash: " + txHash);
     }
 
@@ -55,10 +64,19 @@ public class AccountOperationExample extends AbstractExample {
       // prepare a signer
       AergoKey signer = richKey;
 
-      Name name = Name.of("samplename11");
+      // create an name
+      Name name = randomName();
+      long nonce1 = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      client.getAccountOperation().createNameTx(signer, name, nonce1);
+
+      // sleep
+      Thread.sleep(2000L);
+
+      // update an name
       AccountAddress nextOwner = AccountAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
-      TxHash txHash = client.getAccountOperation().updateNameTx(signer, name, nextOwner, 2L);
+      long nonce2 = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getAccountOperation().updateNameTx(signer, name, nextOwner, nonce2);
       System.out.println("Update name tx hash: " + txHash);
     }
 
@@ -92,24 +110,26 @@ public class AccountOperationExample extends AbstractExample {
 
       // stake 10000 aergo
       Aer amount = Aer.of("10000", Unit.AERGO);
-      TxHash txHash = client.getAccountOperation().stakeTx(signer, amount, 3L);
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getAccountOperation().stakeTx(signer, amount, nonce);
       System.out.println("Stake tx hash: " + txHash);
     }
 
     Thread.sleep(2000L);
 
-    // comment this block on execution
+    // commented since unstake is invalid just after staking
     /* Unstake */
     // UnStake an aergo.
-//    {
-//      // prepare a signer
-//      AergoKey signer = richKey;
-//
-//      // unstake 10000 aergo
+    {
+      // prepare a signer
+      AergoKey signer = richKey;
+
+      // unstake 10000 aergo
 //      Aer amount = Aer.of("10000", Unit.AERGO);
-//      TxHash txHash = client.getAccountOperation().unstakeTx(signer, amount, 4L);
+//      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+//      TxHash txHash = client.getAccountOperation().unstakeTx(signer, amount, nonce);
 //      System.out.println("Unstake tx hash: " + txHash);
-//    }
+    }
 
     /* Get Stake Info */
     // Get stake info of an account.
@@ -127,9 +147,10 @@ public class AccountOperationExample extends AbstractExample {
       // prepare a signer
       AergoKey signer = richKey;
 
-      // vote to "voteBP" with candidate "test"
+      // vote to "voteBP"
       List<String> candidates = asList("16Uiu2HAkwWbv8nKx7S6S5NMvUpTLNeXMVCPr3NTnrx6rBPYYiQ4K");
-      TxHash txHash = client.getAccountOperation().voteTx(signer, "voteBp", candidates, 4L);
+      long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+      TxHash txHash = client.getAccountOperation().voteTx(signer, "voteBp", candidates, nonce);
       System.out.println("Vote tx hash: " + txHash);
     }
 
