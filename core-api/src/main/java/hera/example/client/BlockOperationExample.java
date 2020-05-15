@@ -18,26 +18,7 @@ public class BlockOperationExample extends AbstractExample {
   public static void main(String[] args) throws Exception {
     AergoClient client = getTestnetClient();
 
-    /* Get Block */
-    // Get block.
-    {
-      // By hash.
-      {
-        BlockHash blockHash = BlockHash.of("DN9TvryaThbJneSpzaXp5ZsS4gE3UMzKfaXC4x8L5qR1");
-        Block block = client.getBlockOperation().getBlock(blockHash);
-        System.out.println("Block by hash: " + block);
-      }
-
-      // By height.
-      {
-        long height = 27_066_653L;
-        Block block = client.getBlockOperation().getBlock(height);
-        System.out.println("Block by hash: " + block);
-      }
-    }
-
     /* Get Block Metadata */
-    // Get block metadata.
     {
       // By hash.
       {
@@ -55,7 +36,6 @@ public class BlockOperationExample extends AbstractExample {
     }
 
     /* List Block Metadatas */
-    // Get block metadatas.
     {
       // By hash.
       {
@@ -76,8 +56,51 @@ public class BlockOperationExample extends AbstractExample {
       }
     }
 
+    /* Get Block */
+    {
+      // By hash.
+      {
+        BlockHash blockHash = BlockHash.of("DN9TvryaThbJneSpzaXp5ZsS4gE3UMzKfaXC4x8L5qR1");
+        Block block = client.getBlockOperation().getBlock(blockHash);
+        System.out.println("Block by hash: " + block);
+      }
+
+      // By height.
+      {
+        long height = 27_066_653L;
+        Block block = client.getBlockOperation().getBlock(height);
+        System.out.println("Block by height: " + block);
+      }
+    }
+
+    /* Block Metadata Subscription */
+    {
+      // make a subscription
+      Subscription<BlockMetadata> subscription = client
+          .getBlockOperation().subscribeBlockMetadata(new StreamObserver<BlockMetadata>() {
+            @Override
+            public void onNext(BlockMetadata value) {
+              System.out.println("Next block metadata: " + value);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+            }
+          });
+
+      // wait for a while
+      Thread.sleep(2000L);
+
+      // unsubscribe it
+      subscription.unsubscribe();
+    }
+
     /* Block Subscription */
-    // Subscribe new generated block.
     {
       // make a subscription
       Subscription<Block> subscription = client.getBlockOperation()
@@ -101,34 +124,6 @@ public class BlockOperationExample extends AbstractExample {
 
       // unsubscribe it
       subscription.unsubscribe();
-    }
-
-    /* Block Metadata Subscription */
-    // Subscribe new generated block metadata.
-    {
-      // make a subscription
-      Subscription<BlockMetadata> metadataSubscription = client
-          .getBlockOperation().subscribeBlockMetadata(new StreamObserver<BlockMetadata>() {
-            @Override
-            public void onNext(BlockMetadata value) {
-              System.out.println("Next block metadata: " + value);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-
-            @Override
-            public void onCompleted() {
-            }
-          });
-
-      // wait for a while
-      Thread.sleep(2000L);
-
-      // unsubscribe it
-      metadataSubscription.unsubscribe();
     }
 
     client.close();

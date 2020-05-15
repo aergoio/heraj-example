@@ -6,7 +6,6 @@ package hera.example.wallet;
 
 import static java.util.UUID.randomUUID;
 
-import hera.api.model.AccountAddress;
 import hera.api.model.Authentication;
 import hera.api.model.EncryptedPrivateKey;
 import hera.api.model.Identity;
@@ -61,7 +60,7 @@ public class KeyStoreExample extends AbstractExample {
 
     /* Save and Load */
     {
-      // Using alias
+      // Using alias.
       {
         // create a keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();
@@ -74,7 +73,7 @@ public class KeyStoreExample extends AbstractExample {
         keyStore.save(authentication, key);
       }
 
-      // Using address itself
+      // Using address itself.
       {
         // create an keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();
@@ -90,7 +89,7 @@ public class KeyStoreExample extends AbstractExample {
 
     /* Remove */
     {
-      // Using alias
+      // Using alias.
       {
         // create a keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();
@@ -108,7 +107,7 @@ public class KeyStoreExample extends AbstractExample {
         System.out.println("After remove: " + keyStore.listIdentities());
       }
 
-      // Using address itself
+      // Using address itself.
       {
         // create a keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();
@@ -129,7 +128,7 @@ public class KeyStoreExample extends AbstractExample {
 
     /* Export */
     {
-      // Using alias
+      // Using alias.
       {
         // create a keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();
@@ -146,7 +145,7 @@ public class KeyStoreExample extends AbstractExample {
         System.out.println("Exported: " + exported);
       }
 
-      // Using address itself
+      // Using address itself.
       {
         // create a keystore
         KeyStore keyStore = KeyStores.newInMemoryKeyStore();

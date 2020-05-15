@@ -14,9 +14,9 @@ public class ContractDefinitionExample extends AbstractExample {
     // prepare contractPayload
     String contractPayload = loadResource("/contract_payload");
 
-    /* ContractDefinition */
+    /* Make */
     {
-      // Without args
+      // Without args.
       {
         // made by aergoluac --compiledContract {some_contract}.lua
         String encodedContract = contractPayload;
@@ -28,7 +28,7 @@ public class ContractDefinitionExample extends AbstractExample {
         System.out.println("Contract definition: " + contractDefinition);
       }
 
-      // With args
+      // With args.
       {
         // made by aergoluac --compiledContract {some_contract}.lua
         String encodedContract = contractPayload;
@@ -41,7 +41,7 @@ public class ContractDefinitionExample extends AbstractExample {
         System.out.println("Contract definition: " + contractDefinition);
       }
 
-      // With args and amount
+      // With args and amount.
       {
         // made by aergoluac --compiledContract {some_contract}.lua
         String encodedContract = contractPayload;

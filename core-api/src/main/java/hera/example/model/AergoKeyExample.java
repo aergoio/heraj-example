@@ -26,7 +26,6 @@ public class AergoKeyExample extends AbstractExample {
   public static void main(String[] args) throws NoSuchAlgorithmException {
 
     /* New */
-    // You can make an new aergo key using AergoKeyGenerator.
     {
       AergoKeyGenerator aergoKeyGenerator = new AergoKeyGenerator();
       AergoKey aergoKey = aergoKeyGenerator.create();
@@ -34,7 +33,6 @@ public class AergoKeyExample extends AbstractExample {
     }
 
     /* Export */
-    // You can export aergo key in a different format.
     {
       // Export as wallet import format.
       {
@@ -52,7 +50,6 @@ public class AergoKeyExample extends AbstractExample {
     }
 
     /* Import */
-    // You can import aergo key from a different format.
     {
       // Import with wif.
       {
@@ -62,7 +59,7 @@ public class AergoKeyExample extends AbstractExample {
         System.out.println("Imported from wif: " + imported);
       }
 
-      // Import with wif.
+      // Import with keyformat.
       {
         String keystore = loadResource(
             "/AmPo7xZJoKNfZXg4NMt9n2saXpKRSkMXwEzqEAfzbVWC71HQL3hn__keystore.txt");
@@ -73,7 +70,6 @@ public class AergoKeyExample extends AbstractExample {
     }
 
     /* Sign and Verify */
-    // You can sign message with an aergo key. Heraj also provides utils to verify it.
     {
       // On transaction.
       {

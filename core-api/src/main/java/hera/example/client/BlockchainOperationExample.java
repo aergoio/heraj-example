@@ -24,50 +24,30 @@ public class BlockchainOperationExample extends AbstractExample {
     AergoClient client = getTestnetClient();
 
     /* Get Chain Id Hash */
-    // Get chain id hash of current node.
     {
       ChainIdHash chainIdHash = client.getBlockchainOperation().getChainIdHash();
       System.out.println("Chain id hash: " + chainIdHash);
     }
 
     /* Get Blockchain Status */
-    // Get blockchain status of current node.
     {
       BlockchainStatus blockchainStatus = client.getBlockchainOperation().getBlockchainStatus();
       System.out.println("Blockchain status: " + blockchainStatus);
     }
 
     /* Get Chain Info */
-    // Get chain info of current node.
     {
       ChainInfo chainInfo = client.getBlockchainOperation().getChainInfo();
       System.out.println("Chain info: " + chainInfo);
     }
 
     /* Get Chain Stats */
-    // Get chain statistics of current node.
     {
       ChainStats chainStats = client.getBlockchainOperation().getChainStats();
       System.out.println("Chain stats: " + chainStats);
     }
 
-    /* Get Node Status */
-    // Get node status of current node.
-    {
-      NodeStatus nodeStatus = client.getBlockchainOperation().getNodeStatus();
-      System.out.println("Node status: " + nodeStatus);
-    }
-
-    /* Get Server Info */
-    // Get server info of current node. Category is not implemented yet.
-    {
-      List<String> categories = emptyList();
-      ServerInfo serverInfo = client.getBlockchainOperation().getServerInfo(categories);
-      System.out.println("Server info: " + serverInfo);
-    }
-
     /* List Peers */
-    // List peers of current node.
     {
       // Filtering itself and hidden.
       {
@@ -83,10 +63,22 @@ public class BlockchainOperationExample extends AbstractExample {
     }
 
     /* List Peers Metrics */
-    // List peers metrics of current node.
     {
       List<PeerMetric> peerMetrics = client.getBlockchainOperation().listPeerMetrics();
       System.out.println("PeerMetrics: " + peerMetrics);
+    }
+
+    /* Get Server Info */
+    {
+      List<String> categories = emptyList();
+      ServerInfo serverInfo = client.getBlockchainOperation().getServerInfo(categories);
+      System.out.println("Server info: " + serverInfo);
+    }
+
+    /* Get Node Status */
+    {
+      NodeStatus nodeStatus = client.getBlockchainOperation().getNodeStatus();
+      System.out.println("Node status: " + nodeStatus);
     }
 
     client.close();

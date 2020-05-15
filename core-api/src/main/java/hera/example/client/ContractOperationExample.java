@@ -44,7 +44,6 @@ public class ContractOperationExample extends AbstractExample {
     ContractInterface contractInterfaceKeep;
 
     /* Deploy */
-    // Deploy -> Wait -> Get contract tx receipt -> Find a contract address -> Get contract interface.
     {
       AergoKey signer = richKey;
 
@@ -78,6 +77,7 @@ public class ContractOperationExample extends AbstractExample {
           .getContractInterface(contractAddress);
       System.out.println("Contract interface: " + contractInterface);
 
+
       // ignore in docs
       contractInterfaceKeep = contractInterface;
       contractAddressKeep = contractInterface.getAddress();
@@ -105,7 +105,6 @@ public class ContractOperationExample extends AbstractExample {
     }
 
     /* Get Contract Tx Receipt */
-    // Get contract tx receipt.
     {
       TxHash txHash = TxHash.of("EGXNDgjY2vQ6uuP3UF3dNXud54dF4FNVY181kaeQ26H9");
       ContractTxReceipt contractTxReceipt = client.getContractOperation()
@@ -114,7 +113,6 @@ public class ContractOperationExample extends AbstractExample {
     }
 
     /* Get Contract Interface */
-    // Get contract interface.
     {
       ContractAddress contractAddress = ContractAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
@@ -124,7 +122,6 @@ public class ContractOperationExample extends AbstractExample {
     }
 
     /* Execute */
-    // Execute contract function.
     {
       // prepare signer
       AergoKey signer = richKey;
@@ -157,7 +154,7 @@ public class ContractOperationExample extends AbstractExample {
       // query contract
       ContractResult queryResult = client.getContractOperation().query(query);
       Data data = queryResult.bind(Data.class);
-      System.out.println("Raw contract result: " + queryResult);
+      System.out.println("Raw contract result: " + queryResult); // { "intVal": 123, "stringVal": "test" }
       System.out.println("Binded data: " + data);
     }
 
@@ -180,9 +177,7 @@ public class ContractOperationExample extends AbstractExample {
 
       // subscribe event
       ContractAddress contractAddress = contractAddressKeep;
-      EventFilter eventFilter = EventFilter.newBuilder(contractAddress)
-          .recentBlockCount(1000)
-          .build();
+      EventFilter eventFilter = EventFilter.newBuilder(contractAddress).build();
       Subscription<Event> subscription = client.getContractOperation()
           .subscribeEvent(eventFilter, new StreamObserver<Event>() {
             @Override

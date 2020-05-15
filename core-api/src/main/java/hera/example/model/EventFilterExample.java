@@ -12,7 +12,7 @@ public class EventFilterExample extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
 
-    /* Event Filter */
+    /* Make */
     {
       // With block bumber.
       {
@@ -26,7 +26,7 @@ public class EventFilterExample extends AbstractExample {
         System.out.println("Event filter: " + eventFilter);
       }
 
-      // Of recent block
+      // Of recent block.
       {
         // set event filter for specific address in recent 1000 block
         ContractAddress contractAddress = ContractAddress
@@ -38,7 +38,7 @@ public class EventFilterExample extends AbstractExample {
         System.out.println("Event filter: " + eventFilter);
       }
 
-      // By event name and args
+      // By event name and args.
       {
         // set event filter for specific address with name "set" and args "key" in recent 1000 block
         ContractAddress contractAddress = ContractAddress

@@ -7,14 +7,14 @@ package hera.example.client;
 import hera.client.AergoClient;
 import hera.client.AergoClientBuilder;
 import hera.example.AbstractExample;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-public class AergoClientBuildExample extends AbstractExample {
+public class BuildExample extends AbstractExample {
 
   public static void main(String[] args) {
 
     /* Endpoint */
-    // You can configure aergo node endpoint to connect.
     {
       // connect to 'localhost:7845'
       AergoClient aergoClient = new AergoClientBuilder()
@@ -22,8 +22,7 @@ public class AergoClientBuildExample extends AbstractExample {
           .build();
     }
 
-    /* Connect strategy */
-    // You can configure a strategy to connect.
+    /* Connect Strategy */
     {
       // Non-Blocking connection uses netty internally.
       {
@@ -34,7 +33,7 @@ public class AergoClientBuildExample extends AbstractExample {
             .build();
       }
 
-      // Blocking connection uses okhttp internally..
+      // Blocking connection uses okhttp internally.
       {
         // connect to 'localhost:7845' with blocking connect
         AergoClient aergoClient = new AergoClientBuilder()
@@ -44,9 +43,33 @@ public class AergoClientBuildExample extends AbstractExample {
       }
     }
 
+    /* Connect Type */
+    {
+      // Connect with plaintext. This is default behavior.
+      {
+        // connect with plain text
+        AergoClient aergoClient = new AergoClientBuilder()
+            .withEndpoint("localhost:7845")
+            .withPlainText()
+            .build();
+      }
+
+      // Connect with tls. Note that client key must be PKCS8 format
+      {
+        // prepare cert files
+        InputStream serverCert = loadResourceAsStream("/cert/server.crt");
+        InputStream clientCert = loadResourceAsStream("/cert/client.crt");
+        InputStream clientKey = loadResourceAsStream("/cert/client.pem");
+
+        // connect with plain text
+        AergoClient aergoClient = new AergoClientBuilder()
+            .withEndpoint("localhost:7845")
+            .withTransportSecurity("servername", serverCert, clientCert, clientKey)
+            .build();
+      }
+    }
+
     /* Retry */
-    // You can configure retry count on any kind of failure.
-    // It just retry the same request with an interval.
     {
       // retry 3 count with a 1000ms interval
       AergoClient aergoClient = new AergoClientBuilder()
@@ -55,7 +78,6 @@ public class AergoClientBuildExample extends AbstractExample {
     }
 
     /* Timeout */
-    // You can configure timeout without any response for each request.
     {
       // set timeout as 5000ms for each request.
       AergoClient aergoClient = new AergoClientBuilder()
@@ -64,7 +86,6 @@ public class AergoClientBuildExample extends AbstractExample {
     }
 
     /* Close */
-    // Close an aergo client. You have to close it to prevent memory leak.
     {
       // You can close aergo client by calling close method.
       {

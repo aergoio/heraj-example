@@ -127,26 +127,23 @@ public class TransactionApiExample extends AbstractExample {
 
     /* Vote */
     {
-      /* Vote to Vote Id */
-      {
-        // unlock specific account with authentication
-        walletApi.unlock(authentication);
+      // unlock specific account with authentication
+      walletApi.unlock(authentication);
 
-        // vote to "voteBP"
-        List<String> candidates = asList("16Uiu2HAkwWbv8nKx7S6S5NMvUpTLNeXMVCPr3NTnrx6rBPYYiQ4K");
-        TxHash txHash = walletApi.with(client).transaction().vote("voteBp", candidates);
-        System.out.println("Vote tx hash: " + txHash);
+      // vote to "voteBP"
+      List<String> candidates = asList("16Uiu2HAkwWbv8nKx7S6S5NMvUpTLNeXMVCPr3NTnrx6rBPYYiQ4K");
+      TxHash txHash = walletApi.with(client).transaction().vote("voteBp", candidates);
+      System.out.println("Vote tx hash: " + txHash);
 
-        // lock an account
-        walletApi.lock();
-      }
+      // lock an account
+      walletApi.lock();
     }
 
     Thread.sleep(2000L);
 
     /* Send */
     {
-      // Send without contract_payload to address
+      // Send without contract_payload to address.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -164,7 +161,7 @@ public class TransactionApiExample extends AbstractExample {
 
       Thread.sleep(2000L);
 
-      // Send with contract_payload to address
+      // Send with contract_payload to address.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -183,7 +180,7 @@ public class TransactionApiExample extends AbstractExample {
 
       Thread.sleep(2000L);
 
-      // Send without contract_payload to name
+      // Send without contract_payload to name.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -206,7 +203,7 @@ public class TransactionApiExample extends AbstractExample {
 
       Thread.sleep(2000L);
 
-      // Send with contract_payload to name
+      // Send with contract_payload to name.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -233,7 +230,7 @@ public class TransactionApiExample extends AbstractExample {
 
     /* Commit */
     {
-      /* Raw Transaction */
+      // Sign with unlocked one and commit it.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -260,7 +257,7 @@ public class TransactionApiExample extends AbstractExample {
 
       Thread.sleep(2000L);
 
-      /* Signed Transaction */
+      // Commit signed transaction.
       {
         // unlock specific account with authentication
         walletApi.unlock(authentication);
@@ -328,7 +325,7 @@ public class TransactionApiExample extends AbstractExample {
 
     Thread.sleep(2000L);
 
-    /* Re-deploy */
+    /* Re-Deploy */
     {
       // unlock specific account with authentication
       walletApi.unlock(authentication);

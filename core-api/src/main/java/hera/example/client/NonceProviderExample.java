@@ -26,23 +26,23 @@ public class NonceProviderExample extends AbstractExample {
     AergoKey richKey = getRichKey();
 
     /* Create */
-    // Create a SimpleNonceProvider.
     {
       // With explicit capacity.
       {
         // create nonce provider with capacity 100
         NonceProvider nonceProvider = new SimpleNonceProvider(100);
+        System.out.println("Nonce provider: " + nonceProvider);
       }
 
       // With implicit capacity.
       {
         // create nonce provider with capacity 1000
         NonceProvider nonceProvider = new SimpleNonceProvider();
+        System.out.println("Nonce provider: " + nonceProvider);
       }
     }
 
     /* Bind */
-    // Bind nonce for address.
     {
       // For address.
       {
@@ -50,6 +50,7 @@ public class NonceProviderExample extends AbstractExample {
             .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
         NonceProvider nonceProvider = new SimpleNonceProvider();
         nonceProvider.bindNonce(accountAddress, 30L);
+        System.out.println("Binded nonce: " + nonceProvider.getLastUsedNonce(accountAddress));
       }
 
       // Using account state. It binds nonce for corresponding state.
@@ -59,16 +60,18 @@ public class NonceProviderExample extends AbstractExample {
         AccountState accountState = client.getAccountOperation().getState(accountAddress);
         NonceProvider nonceProvider = new SimpleNonceProvider();
         nonceProvider.bindNonce(accountState);
+        System.out.println("Binded nonce: " + nonceProvider.getLastUsedNonce(accountAddress));
       }
     }
 
     /* Use */
     {
-      // Increment and get nonce. It's thread-safe
+      // Increment and get nonce. It's thread-safe.
       {
         AergoKey signer = richKey;
         NonceProvider nonceProvider = new SimpleNonceProvider();
         long nonce = nonceProvider.incrementAndGetNonce(signer.getAddress());
+        System.out.println("Next nonce: " + nonce);
       }
 
       // Get last used nonce.
@@ -76,6 +79,7 @@ public class NonceProviderExample extends AbstractExample {
         AergoKey signer = richKey;
         NonceProvider nonceProvider = new SimpleNonceProvider();
         long nonce = nonceProvider.getLastUsedNonce(signer.getAddress());
+        System.out.println("Last used nonce: " + nonce);
       }
     }
 

@@ -15,7 +15,6 @@ public class EncodingExample extends AbstractExample {
   public static void main(String[] args) {
 
     /* Encode */
-    // Heraj provides utils for encoding.
     {
       // To hex.
       {
@@ -47,7 +46,6 @@ public class EncodingExample extends AbstractExample {
     }
 
     /* Decode */
-    // Heraj provides utils for decoding.
     {
       // From hex.
       {
@@ -80,7 +78,7 @@ public class EncodingExample extends AbstractExample {
 
     /* Example */
     {
-      // Signature in base64.
+      // Read signature in base64.
       {
         String encoded = "MEUCIQDP3ywVXX1DP42nTgM6cF95GFfpoEcl4D9ZP+MHO7SgoQIgdq2UiEiSp23lcPFzCHtDmh7pVzsow5x1s8p5Kz0aN7I=";
         BytesValue rawSignature = BytesValue.of(encoded, Decoder.Base64);

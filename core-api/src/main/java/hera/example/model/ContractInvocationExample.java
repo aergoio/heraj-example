@@ -22,9 +22,9 @@ public class ContractInvocationExample extends AbstractExample {
     // prepare dummy contract interface
     ContractInterface contractInterfaceKeep = dummyContractInterface();
 
-    /* ContractInvocation */
+    /* Make */
     {
-      // without args
+      // Without args.
       {
         // make a contract invocation
         ContractInterface contractInterface = contractInterfaceKeep;
@@ -34,7 +34,7 @@ public class ContractInvocationExample extends AbstractExample {
         System.out.println("Contract invocation: " + contractInvocation);
       }
 
-      // with args
+      // With args.
       {
         // make a contract invocation
         ContractInterface contractInterface = contractInterfaceKeep;
@@ -45,7 +45,7 @@ public class ContractInvocationExample extends AbstractExample {
         System.out.println("Contract invocation: " + contractInvocation);
       }
 
-      // with args and amount
+      // With args and amount.
       {
         // make a contract invocation
         ContractInterface contractInterface = contractInterfaceKeep;
@@ -57,7 +57,7 @@ public class ContractInvocationExample extends AbstractExample {
         System.out.println("Contract invocation: " + contractInvocation);
       }
 
-      // with args and fee delegation
+      // With args and fee delegation.
       {
         // make a contract invocation
         ContractInterface contractInterface = contractInterfaceKeep;

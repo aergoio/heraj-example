@@ -4,7 +4,8 @@
 
 package hera.example.client;
 
-class Data {
+// java bean
+public class Data {
 
   protected int intVal;
 

@@ -205,7 +205,7 @@ public class TransactionExample extends AbstractExample {
       }
     }
 
-    /* Parse contract_payload to model */
+    /* Parse Payload to Model */
     {
       /* Contract Invocation */
       {

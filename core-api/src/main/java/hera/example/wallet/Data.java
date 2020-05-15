@@ -4,6 +4,7 @@
 
 package hera.example.wallet;
 
+// java bean
 class Data {
 
   protected int intVal;

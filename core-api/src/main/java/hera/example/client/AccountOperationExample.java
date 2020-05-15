@@ -35,7 +35,6 @@ public class AccountOperationExample extends AbstractExample {
     nonceProvider.bindNonce(state);
 
     /* Get Account State */
-    // Get state of account.
     {
       AccountAddress accountAddress = AccountAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
@@ -44,7 +43,6 @@ public class AccountOperationExample extends AbstractExample {
     }
 
     /* Create Name */
-    // Create name which owns by a transaction signer.
     {
       // prepare a signer
       AergoKey signer = richKey;
@@ -59,7 +57,6 @@ public class AccountOperationExample extends AbstractExample {
     Thread.sleep(2000L);
 
     /* Update Name */
-    // Update name owner to new account. It should be done by origin name owner.
     {
       // prepare a signer
       AergoKey signer = richKey;
@@ -83,7 +80,6 @@ public class AccountOperationExample extends AbstractExample {
     Thread.sleep(2000L);
 
     /* Get Name Owner */
-    // Get name owner.
     {
       // At current block.
       {
@@ -103,7 +99,6 @@ public class AccountOperationExample extends AbstractExample {
     }
 
     /* Stake */
-    // Stake an aergo.
     {
       // prepare a signer
       AergoKey signer = richKey;
@@ -119,7 +114,6 @@ public class AccountOperationExample extends AbstractExample {
 
     // commented since unstake is invalid just after staking
     /* Unstake */
-    // UnStake an aergo.
     {
       // prepare a signer
       AergoKey signer = richKey;
@@ -132,17 +126,14 @@ public class AccountOperationExample extends AbstractExample {
     }
 
     /* Get Stake Info */
-    // Get stake info of an account.
     {
       AccountAddress accountAddress = AccountAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
       StakeInfo stakeInfo = client.getAccountOperation().getStakingInfo(accountAddress);
-      System.out.println(stakeInfo);
       System.out.println("Stake info: " + stakeInfo);
     }
 
     /* Vote */
-    // Vote candidate to a vote id.
     {
       // prepare a signer
       AergoKey signer = richKey;
@@ -157,7 +148,6 @@ public class AccountOperationExample extends AbstractExample {
     Thread.sleep(2000L);
 
     /* Get Vote Info */
-    // Get vote info of an account.
     {
       AccountAddress accountAddress = AccountAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
@@ -166,7 +156,6 @@ public class AccountOperationExample extends AbstractExample {
     }
 
     /* Get Vote Result */
-    // Get vote result for vote id.
     {
       // get vote result for vote id "voteBP" for top 23 candidates.
       List<ElectedCandidate> elected = client.getAccountOperation().listElected("voteBP", 23);

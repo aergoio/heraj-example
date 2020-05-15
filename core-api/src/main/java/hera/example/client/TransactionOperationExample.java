@@ -34,7 +34,6 @@ public class TransactionOperationExample extends AbstractExample {
     nonceProvider.bindNonce(state);
 
     /* Get Transaction */
-    // Get transaction info.
     {
       TxHash txHash = TxHash.of("39vLyMqsg1mTT9mF5NbADgNB2YUiRVsT6SUkDujBZme8");
       Transaction transaction = client.getTransactionOperation().getTransaction(txHash);
@@ -42,7 +41,6 @@ public class TransactionOperationExample extends AbstractExample {
     }
 
     /* Get Transaction Receipt */
-    // Get receipt of transaction.
     {
       TxHash txHash = TxHash.of("39vLyMqsg1mTT9mF5NbADgNB2YUiRVsT6SUkDujBZme8");
       TxReceipt txReceipt = client.getTransactionOperation().getTxReceipt(txHash);
@@ -50,7 +48,6 @@ public class TransactionOperationExample extends AbstractExample {
     }
 
     /* Commit */
-    // Commit a signed transaction.
     {
       // get chain id hash
       ChainIdHash chainIdHash = client.getBlockchainOperation().getChainIdHash();
@@ -72,6 +69,8 @@ public class TransactionOperationExample extends AbstractExample {
 
       // sign raw transaction
       Transaction transaction = signer.sign(rawTransaction);
+
+      // commit signed one
       TxHash txHash = client.getTransactionOperation().commit(transaction);
       System.out.println("Commit tx hash: " + txHash);
     }

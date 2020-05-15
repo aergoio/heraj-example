@@ -4,6 +4,7 @@
 
 package hera.example.contract;
 
+// java bean
 class Data {
 
   protected int intVal;

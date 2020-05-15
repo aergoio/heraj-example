@@ -82,7 +82,7 @@ public class QueryApiExample extends AbstractExample {
 
     /* Get Name Owner */
     {
-      // At current block
+      // At current block.
       {
         // get name owner
         Name name = Name.of("namenamename");
@@ -90,7 +90,7 @@ public class QueryApiExample extends AbstractExample {
         System.out.println("Name owner: " + nameOwner);
       }
 
-      // At specific block
+      // At specific block.
       {
         // get name owner at block 10
         Name name = Name.of("namenamename");
@@ -101,7 +101,7 @@ public class QueryApiExample extends AbstractExample {
 
     /* Get Stake Info */
     {
-      // get staking info
+      // get stake info
       AccountAddress accountAddress = AccountAddress
           .of("AmNrsAqkXhQfE6sGxTutQkf9ekaYowaJFLekEm8qvDr1RB1AnsiM");
       StakeInfo stakeInfo = walletApi.with(client).query().getStakeInfo(accountAddress);
@@ -123,7 +123,7 @@ public class QueryApiExample extends AbstractExample {
       System.out.println("Elected candidates: " + candidates);
     }
 
-    /* Get Account State */
+    /* Get Vote Info */
     {
       // get vote info
       AccountAddress accountAddress = AccountAddress
@@ -176,14 +176,14 @@ public class QueryApiExample extends AbstractExample {
 
     /* List Peers */
     {
-      // Filter hidden peers and itself.
+      // Filtering hidden peers and itself.
       {
         // list peers
         List<Peer> peers = walletApi.with(client).query().listPeers();
         System.out.println("Peers: " + peers);
       }
 
-      // With not filtering hidden peers and itself.
+      // Not filtering hidden peers and itself.
       {
         // list peers
         List<Peer> peers = walletApi.with(client).query().listPeers(true, true);
@@ -347,7 +347,7 @@ public class QueryApiExample extends AbstractExample {
       TxHash txHash = TxHash.of("EGXNDgjY2vQ6uuP3UF3dNXud54dF4FNVY181kaeQ26H9");
       ContractTxReceipt contractTxReceipt = walletApi.with(client).query()
           .getContractTxReceipt(txHash);
-      System.out.println("ContractTxReceipt: " + contractTxReceipt);
+      System.out.println("Contract tx receipt: " + contractTxReceipt);
     }
 
     /* Get Contract Interface */
