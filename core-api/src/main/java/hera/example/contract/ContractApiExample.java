@@ -45,8 +45,11 @@ public class ContractApiExample extends AbstractExample {
     // prepare keeps
     ContractAddress deployedContractAddress;
 
-    /* Make */
+    /* Prepare */
     {
+      // Write an smart contract.
+      // .. lua code
+
       // Deploy a contract.
       {
         // make a contract definition
@@ -82,7 +85,10 @@ public class ContractApiExample extends AbstractExample {
 
         // Data definition
       }
+    }
 
+    /* Make */
+    {
       // Make a contract api with implicit retry count and interval on nonce failure.
       {
         // create a contract api
