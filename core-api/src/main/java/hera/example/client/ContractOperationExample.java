@@ -47,7 +47,7 @@ public class ContractOperationExample extends AbstractExample {
     {
       AergoKey signer = richKey;
 
-      // made by aergoluac --compiledContract {some_contract}.lua
+      // made by aergoluac --payload {some_contract}.lua
       String encodedContract = contractPayload;
 
       // make a contract definition
@@ -88,7 +88,7 @@ public class ContractOperationExample extends AbstractExample {
       // prepare signer
       AergoKey signer = richKey;
 
-      // made by aergoluac --compiledContract {some_contract}.lua
+      // made by aergoluac --payload {some_contract}.lua
       String encodedContract = contractPayload;
 
       // make a contract definition

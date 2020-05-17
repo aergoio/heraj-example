@@ -330,7 +330,7 @@ public class TransactionApiExample extends AbstractExample {
       // unlock specific account with authentication
       walletApi.unlock(authentication);
 
-      // made by aergoluac --compiledContract {some_contract}.lua
+      // made by aergoluac --payload {some_contract}.lua
       String encodedContract = contractPayload;
 
       // make a contract definition

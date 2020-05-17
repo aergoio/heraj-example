@@ -18,7 +18,7 @@ public class ContractDefinitionExample extends AbstractExample {
     {
       // Without args.
       {
-        // made by aergoluac --compiledContract {some_contract}.lua
+        // made by aergoluac --payload {some_contract}.lua
         String encodedContract = contractPayload;
 
         // make a contract definition
@@ -30,7 +30,7 @@ public class ContractDefinitionExample extends AbstractExample {
 
       // With args.
       {
-        // made by aergoluac --compiledContract {some_contract}.lua
+        // made by aergoluac --payload {some_contract}.lua
         String encodedContract = contractPayload;
 
         // make a contract definition
@@ -43,7 +43,7 @@ public class ContractDefinitionExample extends AbstractExample {
 
       // With args and amount.
       {
-        // made by aergoluac --compiledContract {some_contract}.lua
+        // made by aergoluac --payload {some_contract}.lua
         String encodedContract = contractPayload;
 
         // make a contract definition
